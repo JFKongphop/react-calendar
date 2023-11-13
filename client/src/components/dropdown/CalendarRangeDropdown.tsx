@@ -1,0 +1,76 @@
+import { Fragment, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { Menu, Transition } from '@headlessui/react';
+import dayjs from 'dayjs';
+import { RangeDay } from '../calendar/type/type';
+
+const timeSelector: RangeDay[] =  ['Today', 'Month'];
+
+const CalendarRangeDropdown = () => {
+  const [rangeDay, setRangeDay] = useState<RangeDay>('Month');
+  
+  const nagvigate = useNavigate();
+  
+  const rangeDaySelectorHandler = (range: RangeDay) => {
+    let terminalUrl: string = '';
+
+    if (range === 'Today') {
+      terminalUrl = `/calendar/${dayjs().format('MMM-DD-YYYY').toLowerCase()}`;
+    }
+
+    if (range === 'Month') {
+      terminalUrl = '/calendar';
+    }
+
+    nagvigate(terminalUrl);
+    setRangeDay(range);
+  }
+  
+  return (
+    <Menu 
+      as="div" 
+      className="relative inline-block text-left"
+    >
+      <div>
+        <Menu.Button 
+          className="inline-flex w-24 justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-md font-semibold shadow-sm border-2 border-calendar-minor-theme"
+        >
+          <p>{rangeDay}</p>
+        </Menu.Button>
+      </div>
+
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Menu.Items 
+          className="absolute right-0 z-10 mt-1 w-24 origin-top-right rounded-md bg-white border-2"
+        >
+          <div className="h-auto p-1">
+            {
+              timeSelector.map((data) => (
+                <Menu.Item key={data}>
+                  {({ active }) => (
+                    <button
+                      onClick={() => rangeDaySelectorHandler(data)}
+                      className={`${active && 'bg-calendar-minor-theme'} flex flex-row justify-center items-center text-md w-full font-medium text-calendar-main-theme h-10 rounded-sm`}
+                    >
+                      <p>{data}</p>
+                    </button>
+                  )}
+                </Menu.Item>
+              ))
+            }
+          </div>
+        </Menu.Items>
+      </Transition>
+    </Menu>
+  )
+}
+
+export default CalendarRangeDropdown;
