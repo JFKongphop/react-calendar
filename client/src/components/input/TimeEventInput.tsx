@@ -42,6 +42,10 @@ const TimeEventInput: FC<ITimeEventInput> = ({
     if (Number(inputValue) > 23 || Number(inputValue) < 0) {
       event.target.value = '0';
     }
+
+    if (!/^[0-9]*$/.test(inputValue)) {
+      event.target.value = '0';
+    }
   };
 
   return (
@@ -66,7 +70,7 @@ const TimeEventInput: FC<ITimeEventInput> = ({
                     timeEventChange(event);
                     field.onChange(event);
                   }}
-                  className="w-12 bg-transparent h-7 rounded-md border-none focus:border-none ring-0 focus:ring-0"
+                  className="w-12 bg-transparent h-7 rounded-md border-none focus:border-none ring-0 focus:ring-0 text-center focus:outline-none"
                 />
               )}
             />

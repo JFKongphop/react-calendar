@@ -1,18 +1,26 @@
-import GlobalContext from '@/context/GlobalContext';
-import dayjs, { Dayjs } from 'dayjs';
-import { FC, useContext } from 'react';
+import { FC, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import dayjs, { Dayjs } from 'dayjs';
+import GlobalContext from '@/context/GlobalContext';
 import { DaySelected } from '../type/type';
 
 interface ISmallDate {
   day: Dayjs | DaySelected;
   currentMonthIdx: number;
+  type: 'navigate' | 'selector';
+  daySelectedEvent?: Dayjs;
+  onDaySelected: (day: Dayjs) => void;
 }
 
 const SmallDate: FC<ISmallDate> = ({
   day,
   currentMonthIdx,
+  type,
+  daySelectedEvent,
+  onDaySelected
 }) => {
+  const [selectedDay, setSelectedDay] = useState<Dayjs>();
+
   const { 
     daySelected,
     setSmallCalendarMonth,
@@ -43,34 +51,54 @@ const SmallDate: FC<ISmallDate> = ({
     navigate(`/calendar/${datePage}`);
   }
 
-  
-
   const getDayClass = (day: Dayjs | DaySelected) => {
     const format = 'DD-MM-YY';
     const currDay = day.format(format);
     const slcDay = daySelected && daySelected.format(format);
-    const today = dayjs().format('DD-MM-YY')
-    
-    if (today === currDay) {
-      return 'bg-calendar-main-theme rounded-full text-white font-bold';
+    const today = dayjs().format('DD-MM-YY');
+    let scheduleDay: string = '';
+    if (daySelectedEvent) {
+      scheduleDay = (daySelectedEvent as unknown as Dayjs).format(format);
     }
 
-    if (slcDay === currDay) {
-      return 'bg-calendar-minor-theme rounded-full text-calendar-main-theme font-bold';
+    if (type === 'navigate') {
+      if (today === currDay) {
+        return 'bg-calendar-main-theme rounded-full text-white font-bold';
+      }
+  
+      if (slcDay === currDay) {
+        return 'bg-calendar-minor-theme rounded-full text-calendar-main-theme font-bold';
+      }
     }
+    if (type === 'selector') {
+      if (scheduleDay === currDay) {
+        return 'bg-calendar-minor-theme rounded-full text-calendar-main-theme font-bold'
+      }
+    } 
 
     return '';
   }
-
-
-  return (
-    <button
-      onClick={() => dateEventHandler(day as DaySelected)}
-      className={`py-1 w-full ${getDayClass(day as Dayjs)}`}
-    >
-      <span className="text-sm">{(day as Dayjs).format("D")}</span>
-    </button>
-  )
+  
+  switch (type) {
+    case 'navigate':
+      return (
+        <button
+          onClick={() => dateEventHandler(day as DaySelected)}
+          className={`py-1 w-full ${getDayClass(day as Dayjs)}`}
+        >
+          <span className="text-sm">{(day as Dayjs).format("D")}</span>
+        </button>
+      )
+    case 'selector':
+      return (
+        <button
+          onClick={() => onDaySelected(day as Dayjs)}
+          className={`py-1 w-full ${getDayClass(day as Dayjs)}`}
+        >
+          <span className="text-sm">{(day as Dayjs).format("D")}</span>
+        </button>
+      )
+  }
 }
 
 export default SmallDate;

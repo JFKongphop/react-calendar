@@ -26,10 +26,7 @@ const calendar = () => {
       <div className="h-screen flex flex-col w-full">
         <CalendarHeader />
         <div className="flex flex-1">
-          <Sidebar 
-            dayEvents={[]}
-            type={'all'} 
-          />
+          <Sidebar/>
           <Month month={currenMonth} />
         </div>
       </div>

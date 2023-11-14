@@ -7,7 +7,7 @@ interface IShortEventList {
 const ShortEventList: FC<IShortEventList> = ({ title }) => {
   const shortTitle = (title: string) => {
     if (title.length > 12) {
-      return title.slice(0, 12) + ' ...';
+      return title.slice(0, 15) + ' ...';
     }
     return title
   } 

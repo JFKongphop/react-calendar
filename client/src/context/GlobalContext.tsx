@@ -8,6 +8,7 @@ import {
   StateEvents 
 } from "./ContextWrapper";
 import { DaySelected } from "@/components/calendar/type/type";
+import { Dayjs } from "dayjs";
 
 export interface IGlobalContext {
   monthIndex: number;
@@ -19,7 +20,7 @@ export interface IGlobalContext {
   filteredEvents: StateEvents[];
   setMonthIndex: (index: number) => void;
   setSmallCalendarMonth: (index: number) => void;
-  setDaySelected: (day: DaySelected) => void;
+  setDaySelected: (day: DaySelected | Dayjs) => void;
   setShowEventModal: Dispatch<SetStateAction<boolean>>;
   dispatchCalEvent: ({ type, payload }: ActionEvent) => void;
   setSelectedEvent: Dispatch<SetStateAction<StateEvents | null>>;

@@ -48,8 +48,6 @@ const initEvents = () => {
   return parsedEvents;
 }
 
-console.log(dayjs())
-
 const ContextWrapper: FC<IContextWrapper> = ({ children }) => {
   const [monthIndex, setMonthIndex] = useState<number>(dayjs().month());
   const [smallCalendarMonth, setSmallCalendarMonth] = useState<any>(null);

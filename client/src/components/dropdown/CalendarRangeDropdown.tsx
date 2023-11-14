@@ -1,13 +1,15 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Menu, Transition } from '@headlessui/react';
 import dayjs from 'dayjs';
 import { RangeDay } from '../calendar/type/type';
+import GlobalContext from '@/context/GlobalContext';
 
 const timeSelector: RangeDay[] =  ['Today', 'Month'];
 
 const CalendarRangeDropdown = () => {
   const [rangeDay, setRangeDay] = useState<RangeDay>('Month');
+  const { setDaySelected, setMonthIndex } = useContext(GlobalContext);
   
   const nagvigate = useNavigate();
   
@@ -22,6 +24,8 @@ const CalendarRangeDropdown = () => {
       terminalUrl = '/calendar';
     }
 
+    setDaySelected(dayjs());
+    setMonthIndex(dayjs().month());
     nagvigate(terminalUrl);
     setRangeDay(range);
   }

@@ -1,42 +1,45 @@
 import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
 import  { 
-  useContext, 
   useEffect, 
   useState,
-  Fragment
+  Fragment,
+  FC
 } from "react";
-import GlobalContext from "@/context/GlobalContext";
 import { getMonth } from "@/utils/getMonth";
 import type { DaySelected } from "./type/type";
 import MonthSlideHandler from "../button/MonthSlideHandler";
 import SmallDate from "./DataList/SmallDate";
 
-const SmallCalendarSelector = () => {
+interface ISmallCalendarSelector {
+  daySelectedEvent: Dayjs;
+  onDaySelected: (day: Dayjs) => void;
+}
+
+const SmallCalendarSelector: FC<ISmallCalendarSelector> = ({
+  daySelectedEvent,
+  onDaySelected,
+}) => {
   const [currentMonthIdx, setCurrentMonthIdx] = useState<number>(
     dayjs().month()
   );
-  const [currentMonth, setCurrentMonth] = useState<Dayjs[][]>(getMonth());  
+  const [currentMonth, setCurrentMonth] = useState<Dayjs[][]>(getMonth());
+  const [monthIndex, setMonthIndex] = useState<number>(dayjs().month());
 
   useEffect(() => {
     setCurrentMonth(getMonth(currentMonthIdx));
   }, [currentMonthIdx]);
 
-  const {
-    monthIndex,
-    setMonthIndex
-  } = useContext(GlobalContext);
-
   useEffect(() => {
     setCurrentMonthIdx(monthIndex);
   }, [monthIndex]);
-
   
-  function handlePrevMonth() {
-    setMonthIndex(monthIndex - 1);
+  const handlePrevMonth = () => {
+    setMonthIndex((month) => month - 1);
   }
-  function handleNextMonth() {
-    setMonthIndex(monthIndex + 1);
+  
+  const handleNextMonth = () => {
+    setMonthIndex((month) => month + 1);
   }
 
   const displayMonth = (format: string) => {
@@ -56,7 +59,9 @@ const SmallCalendarSelector = () => {
   const lastDayByMonthTimestamp = lastDayOfMonth.valueOf();
   
   return (
-    <div className="mt-9 flex flex-col gap-4 border rounded-md shadow-xl">
+    <div
+      className="flex flex-col gap-4 border-2 border-calendar-minor-theme rounded-md w-full p-2"
+    >
       <header className="flex justify-between">
         <MonthSlideHandler 
           type={'left'}
@@ -83,18 +88,13 @@ const SmallCalendarSelector = () => {
               index: number
             ) => (
               <div key={index}>
-                {(displayMonth("MMM") === day.format("MMM")) ?
-                  (
-                    <SmallDate 
-                      day={day}
-                      currentMonthIdx={currentMonthIdx}
-                    />
-                  )
-                  :
-                  (
-                    <div className=""></div>
-                  )
-                }
+                <SmallDate
+                  day={day}
+                  type={'selector'}
+                  currentMonthIdx={currentMonthIdx}
+                  daySelectedEvent={daySelectedEvent}
+                  onDaySelected={onDaySelected}
+                />
               </div>
             ))}
           </Fragment>

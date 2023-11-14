@@ -47,7 +47,7 @@ const day_timestamp = () => {
 
   return (
     <div 
-      className="h-screen border"
+      className="h-screen"
       ref={scheduleInnerRef}
     >
       <CreateMeet 
@@ -58,13 +58,8 @@ const day_timestamp = () => {
         className="flex flex-row w-full"
         style={{ height: scheduleInnerHeight }}
       >
-        <div className=""
-          style={{ height: scheduleInnerHeight }}
-        >
-          <Sidebar
-            dayEvents={events}
-           type='day' 
-          />
+        <div style={{ height: scheduleInnerHeight }}>
+          <Sidebar/>
         </div>
         <CalendarEventCard innerHeight={scheduleInnerHeight}>        
           {

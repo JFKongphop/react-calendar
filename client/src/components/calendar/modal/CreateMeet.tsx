@@ -6,46 +6,40 @@ import {
   Dialog, 
   Transition 
 } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useContext, useState } from "react";
 import GlobalContext, { IGlobalContext } from "@/context/GlobalContext";
-import { DaySelected, IMeetEvent, TimeRatio } from "../type/type";
+import type { IMeetEvent, TimeRatio } from "../type/type";
 import { defaultValues } from "../type/initialState";
-import { useForm } from "react-hook-form";
-import TimeEventInput from '@/components/input/calendar/TimeEventInput';
+import { UseFormRegister, useForm } from "react-hook-form";
+import TimeEventInput from '@/components/input/TimeEventInput';
 import SmallCalendarSelector from '../SmallCalendarSelector';
+import { CgClose } from "react-icons/cg";
+import dayjs, { Dayjs } from 'dayjs';
+import { convertDateToUnix } from '@/utils/convertDateToUnix';
+import SubmitEventButton from '@/components/button/SubmitEventButton';
 
 interface ICreateMeet { showModal: boolean; }
 
 const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
+  const [timeRatioStart, setTimeRatioStart] = useState<TimeRatio>('00');
+  const [timeRatioEnd, setTimeRatioEnd] = useState<TimeRatio>('00');
+  const [openTimeRatioStart, setOpenTimeRatioStart] = useState<boolean>(false);
+  const [openTimeRatioEnd, setOpenTimeRatioEnd] = useState<boolean>(false);
+  const [daySelectorEvent, setDaySelectorEvent] = useState<Dayjs>(dayjs());
+  
   const {
-    setShowEventModal,
-    daySelected,
-    dispatchCalEvent,
     selectedEvent,
+    setShowEventModal,
+    dispatchCalEvent,
   } = useContext<IGlobalContext>(GlobalContext);
 
   const { 
     register,
     handleSubmit,
     reset,
+    watch,
     control,
-  } = useForm<IMeetEvent>({defaultValues})
-
-  const [timeRatioStart, setTimeRatioStart] = useState<TimeRatio>('00');
-  const [openTimeRatioStart, setOpenTimeRatioStart] = useState<boolean>(false);
-  const [timeRatioEnd, setTimeRatioEnd] = useState<TimeRatio>('00');
-  const [openTimeRatioEnd, setOpenTimeRatioEnd] = useState<boolean>(false);
-
-  const convertDateToUnix = (
-    time: string,
-    ratio: TimeRatio
-  ) => {
-    const day = (daySelected as any)
-      .format("MMM DD YYYY") + ` ${time}:${ratio}`;
-  
-    return new Date(day).getTime();
-  }
+  } = useForm<IMeetEvent>({defaultValues});
 
   const onSubmit = async (data: IMeetEvent) => {
     const {
@@ -56,10 +50,18 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
 
     const calendarEvent = {
       title,
-      day: (daySelected as DaySelected).valueOf(),
+      day: daySelectorEvent.valueOf(),
       id: selectedEvent ? selectedEvent.id : Date.now(),
-      startTimestamp: convertDateToUnix(startHour, timeRatioStart),
-      endTimestamp: convertDateToUnix(endHour, timeRatioEnd),
+      startTimestamp: convertDateToUnix(
+        startHour, 
+        timeRatioStart, 
+        daySelectorEvent
+      ),
+      endTimestamp: convertDateToUnix(
+        endHour, 
+        timeRatioEnd, 
+        daySelectorEvent
+      ),
     };
     
     
@@ -73,7 +75,6 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
     reset(defaultValues);
     setTimeRatioStart('00');
     setTimeRatioEnd('00');
-
   }
 
     const toggleTimeRatioStart = () => {
@@ -98,7 +99,11 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
     setShowEventModal(false)
   }
 
+  const getDaySelectedHandler = (day: Dayjs) => {
+    setDaySelectorEvent(day);
+  }
   
+  const registerProps = register as unknown as UseFormRegister<IMeetEvent>;
   
   return (
     <Transition.Root 
@@ -123,7 +128,6 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
             className="fixed inset-0 hidden bg-calendar-main-theme bg-opacity-75 transition-opacity md:block" 
           />
         </Transition.Child>
-
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div 
             className="flex min-h-full items-stretch justify-center text-center md:items-center md:px-2 lg:px-4"
@@ -138,38 +142,35 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
               leaveTo="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
             >
               <Dialog.Panel 
-                className="flex w-[400px] h-[500px] transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-4xl"
+                className="flex w-[400px] h-auto transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-4xl"
               >
                 <div 
-                  className="relative flex flex-col w-full items-center overflow-hidden bg-white p-4 rounded-xl gap-4"
+                  className="relative flex flex-col w-full items-center overflow-hidden bg-white p-4 rounded-xl gap-6"
                 >
                   <div 
                     className="flex flex-row justify-between items-center w-full border-b-2 border-calendar-minor-theme pb-2"
                   >
-                    <p className="font-medium text-xl">นัดหมายการประชุม</p>
+                    <p className="font-semibold text-xl">Create Event Schedule</p>
                     <button
                       type="button"
                       onClick={closeModalHandler}
                     >
-                      <XMarkIcon className="h-6 w-6" />
+                      <CgClose className="h-6 w-6 font-bold" />
                     </button>
 
                   </div>
                   <div
                     className="w-full text-md flex flex-row justify-between relative"
                   >
-                    <p>วันที่</p>
-                    <p>{(daySelected as any).format("dddd, MMMM DD")}</p>
-                    {/* <div className=" absolute z-200 bg-white right-0">
-                      <SmallCalendarSelector />
-
-                    </div> */}
+                    <p>Date</p>
+                    <p>{(daySelectorEvent as any).format("dddd, DD MMMM YYYY")}</p>
                   </div>
+                  
                   <div className="w-full gap-2 flex flex-col">
                     <label 
                       className="flex justify-start items-center text-md"
                     >
-                      หัวข้อ
+                      Title
                     </label>
                     <input
                       type="text" 
@@ -181,7 +182,7 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
                     <TimeEventInput
                       title={"From"}
                       control={control}
-                      name="startHour"
+                      name={"startHour"}
                       openTimeRatio={openTimeRatioStart}
                       timeRatioSelected={timeRatioStart}
                       onRatioSelector={timeRatioStartSelectorHandler}
@@ -192,22 +193,22 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
                     <TimeEventInput
                       title={"To"}
                       control={control}
-                      name="endHour"
+                      name={"endHour"}
                       openTimeRatio={openTimeRatioEnd}
                       timeRatioSelected={timeRatioEnd}
                       onRatioSelector={timeRatioEndSelectorHandler}
                       ontoggleTimeSelector={toggleTimeRatioEnd}
                     />
                   </div>
-                  <div className="w-full absolute bottom-0">
-                    <div className="p-4">
-                      <button 
-                        className="bg-calendar-main-theme w-full hover:bg-calendar-main-theme/90 h-[40px] rounded-md text-white border"
-                        onClick={handleSubmit(onSubmit)}
-                      >
-                        สร้างการประชุม
-                      </button>
-                    </div>
+                  <SmallCalendarSelector
+                    onDaySelected={getDaySelectedHandler}
+                    daySelectedEvent={daySelectorEvent}
+                  />
+                  <div className="w-full">
+                    <SubmitEventButton 
+                      title={'Create Event'}
+                      onSubmitEvent={handleSubmit(onSubmit)}
+                    />
                   </div>
                 </div>
               </Dialog.Panel>

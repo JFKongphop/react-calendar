@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import GlobalContext from "@/context/GlobalContext";
 
-const CreateEventButton = () => {
+const ShowEventModalButton = () => {
   const { setShowEventModal } = useContext(GlobalContext);
 
   const showEventModal = () => {
@@ -18,4 +18,4 @@ const CreateEventButton = () => {
   );
 }
 
-export default CreateEventButton;
+export default ShowEventModalButton;

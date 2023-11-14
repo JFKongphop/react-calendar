@@ -57,7 +57,7 @@ const SmallCalendar = () => {
   
   return (
     <div className="mt-9 flex flex-col gap-4 text-calendar-main-theme">
-      <header className="flex justify-between">
+      <header className="flex justify-between items-center">
         <MonthSlideHandler 
           type={'left'}
           onSlideMonth={handlePrevMonth}
@@ -85,20 +85,10 @@ const SmallCalendar = () => {
               <div key={index}>
                 <SmallDate 
                   day={day}
+                  type={'navigate'}
+                  onDaySelected={() =>{}}
                   currentMonthIdx={currentMonthIdx}
                 />
-                {/* {(displayMonth("MMM") === day.format("MMM")) ?
-                  (
-                    <SmallDate 
-                      day={day}
-                      currentMonthIdx={currentMonthIdx}
-                    />
-                  )
-                  :
-                  (
-                    <div className=""></div>
-                  )
-                } */}
               </div>
             ))}
           </Fragment>
