@@ -8,6 +8,10 @@ import {
 import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
 
+// for smart contract only
+import { useConnect, useAccount } from 'wagmi';
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+
 interface IContextWrapper {
   children: ReactNode;
 } 
@@ -55,6 +59,11 @@ const ContextWrapper: FC<IContextWrapper> = ({ children }) => {
   const [showEventModal, setShowEventModal] = useState<any>(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
+  const { connect } = useConnect();
+  const { address } = useAccount();
+
+  console.log(address)
+
   const [savedEvents, dispatchCalEvent] = useReducer(
     savedEventsReducer,
     [],
@@ -76,6 +85,10 @@ const ContextWrapper: FC<IContextWrapper> = ({ children }) => {
       setSelectedEvent(null);
     }
   }, [showEventModal]);
+
+  useEffect(() => {
+    connect({ connector: new MetaMaskConnector() })
+  }, [])
 
   return (
     <GlobalContext.Provider

@@ -11,6 +11,7 @@ import { getMonth } from "@/utils/getMonth";
 import type { DaySelected } from "./type/type";
 import MonthSlideHandler from "../button/MonthSlideHandler";
 import SmallDate from "./DataList/SmallDate";
+import { getYear } from "@/utils/getAllYear";
 
 const SmallCalendar = () => {
   const [currentMonthIdx, setCurrentMonthIdx] = useState<number>(
@@ -45,6 +46,20 @@ const SmallCalendar = () => {
       , currentMonthIdx)
     ).format(format);
   }
+
+  // const years = Array.from({ length: 12 }).map((_ ,month) => {
+  //   return {
+  //     month: dayjs().month(month).format('MMMM'),
+  //     days: getMonth(month)
+  //   }
+  // })
+
+  // console.log(years)
+
+  // console.log(dayjs().year())
+
+  const a = getYear(0, 2022);
+  console.log(a)
 
   const [monthName, year] = displayMonth('MMMM YYYY').split(' ');
   const startDayOfMonth = dayjs(`${Number(year)}-${monthName}-01`)
