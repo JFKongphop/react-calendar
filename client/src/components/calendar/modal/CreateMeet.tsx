@@ -1,6 +1,7 @@
 import { 
   Fragment, 
   FC,
+  useEffect,
 } from 'react';
 import { 
   Dialog, 
@@ -17,6 +18,7 @@ import { CgClose } from "react-icons/cg";
 import dayjs, { Dayjs } from 'dayjs';
 import { convertDateToUnix } from '@/utils/convertDateToUnix';
 import SubmitEventButton from '@/components/button/SubmitEventButton';
+import { useParams } from 'react-router-dom';
 
 interface ICreateMeet { showModal: boolean; }
 
@@ -26,6 +28,8 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
   const [openTimeRatioStart, setOpenTimeRatioStart] = useState<boolean>(false);
   const [openTimeRatioEnd, setOpenTimeRatioEnd] = useState<boolean>(false);
   const [daySelectorEvent, setDaySelectorEvent] = useState<Dayjs>(dayjs());
+
+  const { day_date } = useParams();  
   
   const {
     selectedEvent,
@@ -64,7 +68,6 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
       ),
     };
     
-    
     if (selectedEvent) {
       dispatchCalEvent({ type: "update", payload: calendarEvent });
     } else {
@@ -77,7 +80,7 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
     setTimeRatioEnd('00');
   }
 
-    const toggleTimeRatioStart = () => {
+  const toggleTimeRatioStart = () => {
     setOpenTimeRatioStart(!openTimeRatioStart);
   }
 
@@ -102,6 +105,10 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
   const getDaySelectedHandler = (day: Dayjs) => {
     setDaySelectorEvent(day);
   }
+
+  useEffect(() => {
+    setDaySelectorEvent(dayjs(day_date))
+  }, [day_date]);
   
   const registerProps = register as unknown as UseFormRegister<IMeetEvent>;
   

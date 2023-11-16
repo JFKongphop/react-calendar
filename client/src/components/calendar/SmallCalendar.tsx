@@ -47,13 +47,15 @@ const SmallCalendar = () => {
   }
 
   const [monthName, year] = displayMonth('MMMM YYYY').split(' ');
-  const firstDayOfMonth = dayjs(`${Number(year)}-${monthName}-01`)
-  .startOf('day');
-  const lastDayOfMonth = dayjs(`${Number(year)}-${monthName}-01`)
-  .endOf('day');
+  const startDayOfMonth = dayjs(`${Number(year)}-${monthName}-01`)
+  .startOf('month');
+  const endDayOfMonth = dayjs(`${Number(year)}-${monthName}-01`)
+  .endOf('month');
 
-  const firstDayByMonthTimestamp = firstDayOfMonth.valueOf();
-  const lastDayByMonthTimestamp = lastDayOfMonth.valueOf();
+  const startDayByMonthTimestamp = startDayOfMonth.valueOf();
+  const endDayByMonthTimestamp = endDayOfMonth.valueOf();
+
+  console.log('month', startDayByMonthTimestamp, endDayByMonthTimestamp);
   
   return (
     <div className="mt-9 flex flex-col gap-4 text-calendar-main-theme">

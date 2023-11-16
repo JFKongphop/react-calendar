@@ -36,6 +36,8 @@ const day_timestamp = () => {
       && data.endTimestamp <= endOfDayTimestamp
   );
 
+  console.log('day', startOfDayTimestamp, endOfDayTimestamp)
+
   const scheduleInnerRef = useRef<any>();
   useEffect(() => {
     if (scheduleInnerRef.current) {
@@ -44,7 +46,6 @@ const day_timestamp = () => {
     }
   }, []);
   
-
   return (
     <div 
       className="h-screen"
@@ -65,7 +66,7 @@ const day_timestamp = () => {
           {
             events.map((data) => (
               <EventList 
-                key={data.title}
+                key={data.id}
                 title={data.title}
                 startTimestamp={data.startTimestamp}
                 endTimestamp={data.endTimestamp}
@@ -79,7 +80,6 @@ const day_timestamp = () => {
                 index={index} 
               />
             ))}
-
           </div>
           <div className="w-[95%] border-l">
             {Array.from({ length: 24 }).map((_, index) => (

@@ -1,5 +1,5 @@
 import { FC, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import dayjs, { Dayjs } from 'dayjs';
 import GlobalContext from '@/context/GlobalContext';
 import { DaySelected } from '../type/type';
@@ -27,6 +27,7 @@ const SmallDate: FC<ISmallDate> = ({
     setDaySelected,
   } = useContext(GlobalContext);
   const navigate = useNavigate();
+  const { day_date } = useParams();
 
   const dateEventHandler = (day: DaySelected) => {
     setSmallCalendarMonth(currentMonthIdx);
@@ -56,6 +57,8 @@ const SmallDate: FC<ISmallDate> = ({
     const currDay = day.format(format);
     const slcDay = daySelected && daySelected.format(format);
     const today = dayjs().format('DD-MM-YY');
+    const dayParam = dayjs(day_date).format('DD-MM-YY').toLowerCase();
+  
     let scheduleDay: string = '';
     if (daySelectedEvent) {
       scheduleDay = (daySelectedEvent as unknown as Dayjs).format(format);
@@ -66,7 +69,7 @@ const SmallDate: FC<ISmallDate> = ({
         return 'bg-calendar-main-theme rounded-full text-white font-bold';
       }
   
-      if (slcDay === currDay) {
+      if (slcDay === currDay || dayParam === currDay) {
         return 'bg-calendar-minor-theme rounded-full text-calendar-main-theme font-bold';
       }
     }

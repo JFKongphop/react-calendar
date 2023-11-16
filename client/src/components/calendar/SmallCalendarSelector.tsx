@@ -10,6 +10,7 @@ import { getMonth } from "@/utils/getMonth";
 import type { DaySelected } from "./type/type";
 import MonthSlideHandler from "../button/MonthSlideHandler";
 import SmallDate from "./DataList/SmallDate";
+import { useParams } from "react-router-dom";
 
 interface ISmallCalendarSelector {
   daySelectedEvent: Dayjs;
@@ -25,6 +26,10 @@ const SmallCalendarSelector: FC<ISmallCalendarSelector> = ({
   );
   const [currentMonth, setCurrentMonth] = useState<Dayjs[][]>(getMonth());
   const [monthIndex, setMonthIndex] = useState<number>(dayjs().month());
+
+  const { day_date } = useParams();
+
+  console.log(day_date)
 
   useEffect(() => {
     setCurrentMonth(getMonth(currentMonthIdx));
@@ -50,13 +55,13 @@ const SmallCalendarSelector: FC<ISmallCalendarSelector> = ({
   }
 
   const [monthName, year] = displayMonth('MMMM YYYY').split(' ');
-  const firstDayOfMonth = dayjs(`${Number(year)}-${monthName}-01`)
+  const startOfMonth = dayjs(`${Number(year)}-${monthName}-01`)
   .startOf('day');
-  const lastDayOfMonth = dayjs(`${Number(year)}-${monthName}-01`)
+  const endOfMonth = dayjs(`${Number(year)}-${monthName}-01`)
   .endOf('day');
 
-  const firstDayByMonthTimestamp = firstDayOfMonth.valueOf();
-  const lastDayByMonthTimestamp = lastDayOfMonth.valueOf();
+  const startOfMonthTimestamp = startOfMonth.valueOf();
+  const endOfMonthTimestamp = endOfMonth.valueOf();
   
   return (
     <div
