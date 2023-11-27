@@ -50,3 +50,10 @@ export type CalendarDetail = {
 }
 
 export type RangeDay = 'Today' | 'Month';
+
+export type CalendarEvent = {
+  title: string;
+  id: number;
+  startTimestamp: number;
+  endTimestamp: number;
+} 

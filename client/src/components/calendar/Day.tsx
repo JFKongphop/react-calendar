@@ -9,7 +9,7 @@ import GlobalContext from "@/context/GlobalContext";
 import { DaySelected } from "./type/type";
 import { useNavigate } from "react-router-dom";
 import { StateEvents } from "@/context/ContextWrapper";
-import ShortEventList from "./DataList/ShortEventList";
+import ShortEventList from "../card/ShortEventList";
 
 interface IDay {
   day: DaySelected;

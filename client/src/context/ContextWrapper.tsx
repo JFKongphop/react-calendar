@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 // for smart contract only
 import { useConnect, useAccount } from 'wagmi';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import { CalendarEvent } from "@/components/calendar/type/type";
 
 interface IContextWrapper {
   children: ReactNode;
@@ -59,10 +60,8 @@ const ContextWrapper: FC<IContextWrapper> = ({ children }) => {
   const [showEventModal, setShowEventModal] = useState<any>(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
-  const { connect } = useConnect();
-  const { address } = useAccount();
-
-  console.log(address)
+  // const { connect } = useConnect();
+  // const { address } = useAccount();
 
   const [savedEvents, dispatchCalEvent] = useReducer(
     savedEventsReducer,
@@ -86,9 +85,9 @@ const ContextWrapper: FC<IContextWrapper> = ({ children }) => {
     }
   }, [showEventModal]);
 
-  useEffect(() => {
-    connect({ connector: new MetaMaskConnector() })
-  }, [])
+  // useEffect(() => {
+  //   connect({ connector: new MetaMaskConnector() })
+  // }, [])
 
   return (
     <GlobalContext.Provider

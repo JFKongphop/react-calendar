@@ -1,4 +1,4 @@
-import SelectorList from '@/components/calendar/DataList/SelectorList';
+import SelectorList from '@/components/card/SelectorList';
 import { timeRatioSelector } from '@/components/calendar/type/initialState';
 import type { 
   IMeetEvent,

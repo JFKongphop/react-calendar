@@ -10,7 +10,7 @@ import GlobalContext from "@/context/GlobalContext";
 import { getMonth } from "@/utils/getMonth";
 import type { DaySelected } from "./type/type";
 import MonthSlideHandler from "../button/MonthSlideHandler";
-import SmallDate from "./DataList/SmallDate";
+import SmallDate from "../card/SmallDate";
 import { getYear } from "@/utils/getAllYear";
 
 const SmallCalendar = () => {
@@ -47,20 +47,6 @@ const SmallCalendar = () => {
     ).format(format);
   }
 
-  // const years = Array.from({ length: 12 }).map((_ ,month) => {
-  //   return {
-  //     month: dayjs().month(month).format('MMMM'),
-  //     days: getMonth(month)
-  //   }
-  // })
-
-  // console.log(years)
-
-  // console.log(dayjs().year())
-
-  const a = getYear(0, 2022);
-  console.log(a)
-
   const [monthName, year] = displayMonth('MMMM YYYY').split(' ');
   const startDayOfMonth = dayjs(`${Number(year)}-${monthName}-01`)
   .startOf('month');
@@ -70,7 +56,8 @@ const SmallCalendar = () => {
   const startDayByMonthTimestamp = startDayOfMonth.valueOf();
   const endDayByMonthTimestamp = endDayOfMonth.valueOf();
 
-  console.log('month', startDayByMonthTimestamp, endDayByMonthTimestamp);
+  const allYear = Array.from({ length: 12 }).map((_, month) => getYear(month))
+  
   
   return (
     <div className="mt-9 flex flex-col gap-4 text-calendar-main-theme">

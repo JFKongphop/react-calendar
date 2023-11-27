@@ -1,24 +1,35 @@
 import { 
   Fragment, 
-  FC,
   useEffect,
+  useContext, 
+  useState
 } from 'react';
 import { 
   Dialog, 
   Transition 
 } from '@headlessui/react';
-import { useContext, useState } from "react";
-import GlobalContext, { IGlobalContext } from "@/context/GlobalContext";
-import type { IMeetEvent, TimeRatio } from "../type/type";
-import { defaultValues } from "../type/initialState";
-import { UseFormRegister, useForm } from "react-hook-form";
-import TimeEventInput from '@/components/input/TimeEventInput';
-import SmallCalendarSelector from '../SmallCalendarSelector';
-import { CgClose } from "react-icons/cg";
-import dayjs, { Dayjs } from 'dayjs';
-import { convertDateToUnix } from '@/utils/convertDateToUnix';
-import SubmitEventButton from '@/components/button/SubmitEventButton';
+import GlobalContext from "@/context/GlobalContext";
 import { useParams } from 'react-router-dom';
+import { useForm } from "react-hook-form";
+import dayjs from 'dayjs';
+
+import { CgClose } from "react-icons/cg";
+import TimeEventInput from '@/components/input/TimeEventInput';
+import SmallCalendarSelector from '@/components/calendar/SmallCalendarSelector';
+import SubmitEventButton from '@/components/button/SubmitEventButton';
+import { defaultValues } from "@/components/calendar/type/initialState";
+
+import { convertDateToUnix } from '@/utils/convertDateToUnix';
+
+import type { FC } from 'react'
+import type { UseFormRegister } from "react-hook-form";
+import type { Dayjs } from 'dayjs';
+import type { IGlobalContext } from "@/context/GlobalContext";
+import type { 
+  IMeetEvent, 
+  TimeRatio 
+} from "../calendar/type/type";
+
 
 interface ICreateMeet { showModal: boolean; }
 
@@ -54,7 +65,6 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
 
     const calendarEvent = {
       title,
-      day: daySelectorEvent.valueOf(),
       id: selectedEvent ? selectedEvent.id : Date.now(),
       startTimestamp: convertDateToUnix(
         startHour, 
@@ -67,12 +77,14 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
         daySelectorEvent
       ),
     };
+
+    console.log(calendarEvent)
     
-    if (selectedEvent) {
-      dispatchCalEvent({ type: "update", payload: calendarEvent });
-    } else {
-      dispatchCalEvent({ type: "push", payload: calendarEvent });
-    }
+    // if (selectedEvent) {
+    //   dispatchCalEvent({ type: "update", payload: calendarEvent });
+    // } else {
+    //   dispatchCalEvent({ type: "push", payload: calendarEvent });
+    // }
 
     setShowEventModal(false);
     reset(defaultValues);

@@ -2,7 +2,7 @@ import { FC, useContext, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs, { Dayjs } from 'dayjs';
 import GlobalContext from '@/context/GlobalContext';
-import { DaySelected } from '../type/type';
+import { DaySelected } from '../calendar/type/type';
 
 interface ISmallDate {
   day: Dayjs | DaySelected;

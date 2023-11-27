@@ -4,7 +4,7 @@ import GlobalContext from '@/context/GlobalContext';
 import { getMonth } from '@/utils/getMonth';
 import { useContext, useEffect, useState } from 'react'
 import Month from '@/components/calendar/Month';
-import CreateMeet from '@/components/calendar/modal/CreateMeet';
+import CreateMeet from '@/components/modal/CreateMeet';
 import { useContractRead } from 'wagmi'
 import { calendarABI } from '@/abi/calendar';
 

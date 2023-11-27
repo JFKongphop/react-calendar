@@ -1,6 +1,6 @@
 import { StateEvents } from '@/context/ContextWrapper';
 import { FC } from 'react';
-import SmallEventList from './DataList/SmallEventList';
+import SmallEventList from '../card/SmallEventList';
 
 interface ISmallEvent {
   dayEvents: StateEvents[]

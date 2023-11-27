@@ -9,7 +9,7 @@ import  {
 import { getMonth } from "@/utils/getMonth";
 import type { DaySelected } from "./type/type";
 import MonthSlideHandler from "../button/MonthSlideHandler";
-import SmallDate from "./DataList/SmallDate";
+import SmallDate from "../card/SmallDate";
 import { useParams } from "react-router-dom";
 
 interface ISmallCalendarSelector {
