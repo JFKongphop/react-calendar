@@ -1,46 +1,49 @@
 package main
 
 import (
+	"calendar-structure/handler"
+	"calendar-structure/repository"
+	"calendar-structure/service"
+	_ "database/sql"
 	"fmt"
-	// "server/handler"
-	"server/repository"
-	"server/service"
+	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
 )
 
 func main() {
 	initConfig()
-	db := intiDatabase()
-
+	db := initDatabase()
 	eventRepositoryDB := repository.NewEventRepositoryDB(db)
 	eventService := service.NewEventService(eventRepositoryDB)
-	// eventHandler := handler.NewServiceHanlder(eventService)
-	// _=eventHandler
-	// _ = eventService
+	eventHandler := handler.NewEventHandler(eventService)
 
 	app := fiber.New()
-	_ = app
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: viper.GetString("api.end_point"),
+		AllowMethods: strings.Join([]string{
+			fiber.MethodGet,
+			fiber.MethodPost,
+		}, ","),
+	}))
+	app.Use(logger.New())
+	
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"message": "api is running",
+		})
+	})
+	app.Get("/calendar", eventHandler.GetEvents)
+	app.Post("/calendar", eventHandler.CreateEvent)
 
-	event := repository.Event{
-    Title: "test event",
-    Id: 1700841927363,
-    StartEvent: 8,
-    EndEvent: 12,
-	}
-
-	eventService.CreateEvent(event)
-
-	// app.Get("/calendar", func(c *fiber.Ctx) error {
-	// 	start_evebnt := c.QueryInt("start-event")
-	// 	end_event := c.QueryInt("end-event")
-
-	// 	return nil
-	// })
+	port := fmt.Sprintf(":%v", viper.GetInt("app.port"))
+	app.Listen(port)
 }
 
 func initConfig() {
@@ -54,7 +57,7 @@ func initConfig() {
 	}
 }
 
-func intiDatabase() *sqlx.DB {
+func initDatabase() *sqlx.DB {
 	dataSourceName := fmt.Sprintf(
 		"%v@tcp(%v:%v)/%v",
 		viper.GetString("db.username"),
@@ -62,8 +65,6 @@ func intiDatabase() *sqlx.DB {
 		viper.GetInt("db.port"),
 		viper.GetString("db.database"),
 	)
-
-	println(dataSourceName)
 
 	db, err := sqlx.Open(viper.GetString("db.driver"), dataSourceName)
 	if err != nil {

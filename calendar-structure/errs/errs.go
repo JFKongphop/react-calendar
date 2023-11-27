@@ -11,9 +11,9 @@ func (e AppError) Error() string {
 	return e.Message
 }
 
-func NewUnExpectError() error {
+func NewUnexpectedError() error {
 	return AppError{
 		Code: fiber.StatusInternalServerError,
-		Message: "unexpect error",
+		Message: "unexpected error",
 	}
 }

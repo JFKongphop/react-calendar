@@ -7,3 +7,6 @@ db:
   port: 3306
   username: root
   database: calendar
+
+api:
+  end_point: http://localhost:5173
