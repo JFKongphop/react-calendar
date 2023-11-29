@@ -41,7 +41,6 @@ export type TimeInputValue = 'startHour' | 'endHour';
 
 export type CalendarDetail = {
   monthIndex: number,
-  smallCalendarMonth: number,
   daySelected: DaySelected,
   showEventModal: boolean,
   savedEvents: StateEvents[],
@@ -54,6 +53,6 @@ export type RangeDay = 'Today' | 'Month';
 export type CalendarEvent = {
   title: string;
   id: number;
-  startTimestamp: number;
-  endTimestamp: number;
+  start_event: number;
+  end_event: number;
 } 

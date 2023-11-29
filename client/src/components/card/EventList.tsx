@@ -1,5 +1,6 @@
-import { FC } from 'react';
 import dayjs from 'dayjs';
+
+import type { FC } from 'react';
 
 interface IEventList {
   title: string;

@@ -1,3 +1,5 @@
+import { useContractRead } from "wagmi";
+
 export const calendarABI = [
   {
     "anonymous": false,
@@ -266,3 +268,10 @@ export const calendarABI = [
     "type": "function"
   }
 ]
+
+const calendarEvents = useContractRead({
+  address: '0xbF641DC13778536C666700DA9f3457856bC9A423',
+  abi: calendarABI,
+  functionName: 'getDayEvent',
+  args: ['1699894800000-1699981199999']
+});

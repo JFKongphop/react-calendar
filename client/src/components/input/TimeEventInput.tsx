@@ -1,17 +1,12 @@
-import SelectorList from '@/components/card/SelectorList';
-import { timeRatioSelector } from '@/components/calendar/type/initialState';
-import type { 
-  IMeetEvent,
-  TimeInputValue, 
-  TimeRatio 
-} from '@/components/calendar/type/type';
-import type { 
-  ChangeEvent, 
-  FC 
-} from 'react';
-import type { Control } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import { RxDotFilled } from 'react-icons/rx';
+
+import SelectorList from '@/components/card/SelectorList';
+import { timeRatioSelector } from '@/components/calendar/type/initialState';
+
+import type { ChangeEvent, FC } from 'react';
+import type { Control } from 'react-hook-form';
+import type { IMeetEvent, TimeInputValue, TimeRatio } from '@/components/calendar/type/type';
 
 interface ITimeEventInput {
   title: string;

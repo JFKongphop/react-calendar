@@ -1,78 +1,56 @@
-import dayjs from "dayjs";
-import { 
-  useContext, 
-  useState, 
-  useEffect, 
-  FC 
-} from "react";
-import GlobalContext from "@/context/GlobalContext";
-import { DaySelected } from "./type/type";
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { StateEvents } from "@/context/ContextWrapper";
-import ShortEventList from "../card/ShortEventList";
+import dayjs from "dayjs";
+
+import { useSelector } from "@/redux/store";
+import { addDaySelected } from "@/redux/slice/daySelected.slice";
+import { allEventData } from "@/redux/selector/event.selector";
+
+import ShortEventList from "@/components/card/ShortEventList";
+
+import type { FC } from "react";
+import type { Dayjs } from "dayjs";
+import type{ CalendarEvent } from "./type/type";
+import { rangeTimeData } from "@/redux/selector/rangeTime.selector";
 
 interface IDay {
-  day: DaySelected;
+  day: Dayjs;
   rowIdx: number;
 }
 
 const Day:FC<IDay> = ({ 
   day, 
-  rowIdx 
+  rowIdx,
 }) => {
-  const [dayEvents, setDayEvents] = useState<StateEvents[]>([]);
+  const [dayEvents, setDayEvents] = useState<CalendarEvent[]>([]);
   const navigate = useNavigate();
-
-  const {
-    filteredEvents,
-    monthIndex,
-    setDaySelected,
-  } = useContext(GlobalContext);
-  
+  const dispatch = useDispatch();
+  const events = useSelector(allEventData);
+  const rangeTime = useSelector(rangeTimeData)
 
   useEffect(() => {
-    const events: StateEvents[] = filteredEvents.filter(
-      (evt: any) =>
-        dayjs(evt.day).format('DD-MM-YY') === day.format('DD-MM-YY')
-    );
-    setDayEvents(events);
-  }, [filteredEvents, day]);  
-  
-  const dateEventHandler = () => {
-    setDaySelected(day);
-    const dateString = day?.$d
-      .toString()
-      .split(' ')
-      .slice(1, 4)
-      .join(' ');
+    const eventEachDay: CalendarEvent[] = events.filter(
+      (evt) => 
+        dayjs(evt.start_event).startOf('day').valueOf() 
+        === dayjs(day).startOf('day').valueOf()
+    )
+    setDayEvents(eventEachDay);
+  }, [rangeTime]);
 
-    const datePage = dateString
-      ?.toLocaleLowerCase()
-      .split(' ')
-      .join('-');
+  const dateEventHandler = () => {
+    dispatch(addDaySelected(day))
+    const datePage = dayjs(day).format('MMM-DD-YYYY').toLowerCase()
   
-    navigate(`/calendar/${datePage}`);
+    navigate(`/calendar/date/${datePage}`);
   }
 
   const getCurrentDayClass = () => {
-    return day.format('DD-MM-YY') === dayjs().format('DD-MM-YY')
+    return day.startOf('day').valueOf() === dayjs().startOf('day').valueOf()
       ? 'bg-calendar-main-theme text-white rounded-full w-7 font-bold'
       : '';
   }
 
-  const displayMonth = (format: string) => {
-    return dayjs(
-      new Date(dayjs().year()
-      , monthIndex)
-    ).format(format);
-  }
-
-  const displayCurrentMonth: boolean = 
-    displayMonth('MMM') === (day as any).format('MMM');
-
-
-  // console.log(dayEvents)
-  
   return (
     <div 
       className="border border-calendar-minor-theme flex flex-col"
@@ -88,19 +66,6 @@ const Day:FC<IDay> = ({
         >
           {(day as any).format("DD")}
         </p>
-        {/* {displayCurrentMonth ? 
-          (
-            <p
-              className={`text-sm p-1 my-1 text-center ${getCurrentDayClass()}`}
-            >
-              {(day as any).format("DD")}
-            </p>
-          )
-          :
-          (
-            <p/>
-          )
-        } */}
       </header>
       <div
         className="flex-1 flex flex-col gap-[2px] cursor-pointer"
@@ -123,35 +88,6 @@ const Day:FC<IDay> = ({
           </p>
         }
       </div>
-      {/* {displayCurrentMonth ?
-        (
-          <div
-            className="flex-1 flex flex-col gap-[2px] cursor-pointer"
-            onClick={dateEventHandler}
-          >
-            {dayEvents.slice(0, 3).map((
-              event, 
-              index
-            ) => (
-              <ShortEventList 
-                key={index} 
-                title={event.title} 
-              />
-            ))}
-            {dayEvents && dayEvents.length > 3 && 
-              <p 
-                className="text-standswork-zeus-black-100 px-1 text-[14px]"
-              >
-                ...เพิ่มเติม
-              </p>
-            }
-          </div>
-        )
-        :
-        (
-          <div className="flex-1" />
-        )
-      } */}
     </div>
   );
 }

@@ -1,21 +1,21 @@
-import { useContext } from "react";
-import GlobalContext from "@/context/GlobalContext";
+import { useDispatch } from 'react-redux';
+import { toggleCreateEventModal } from '@/redux/slice/showCreateEventModal.slice';
 
 const ShowEventModalButton = () => {
-  const { setShowEventModal } = useContext(GlobalContext);
+  const dispatch = useDispatch()
 
-  const showEventModal = () => {
-    setShowEventModal(true);
-  }
+  const showEventModalHandler = () => {
+    dispatch(toggleCreateEventModal(true))
+  };
 
   return (
     <button
-      onClick={showEventModal}
-      className="border-2 border-calendar-minor-theme px-6 py-2 rounded-full flex items-center justify-center text-calendar-main-theme"
+      onClick={showEventModalHandler}
+      className="border-2 border-calendar-minor-theme px-8 py-2 rounded-full flex items-center justify-center text-calendar-main-theme"
     >
       <span className="font-semibold">Create</span>
     </button>
-  );
+  )
 }
 
 export default ShowEventModalButton;

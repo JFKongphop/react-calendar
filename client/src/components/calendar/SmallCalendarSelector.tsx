@@ -1,16 +1,14 @@
-import dayjs from "dayjs";
-import type { Dayjs } from "dayjs";
-import  { 
-  useEffect, 
-  useState,
-  Fragment,
-  FC
-} from "react";
-import { getMonth } from "@/utils/getMonth";
-import type { DaySelected } from "./type/type";
-import MonthSlideHandler from "../button/MonthSlideHandler";
-import SmallDate from "../card/SmallDate";
+import { useEffect, useState, Fragment } from "react";
 import { useParams } from "react-router-dom";
+import dayjs from "dayjs";
+
+import MonthSlideHandler from "../button/MonthSlideHandler";
+import SmallDate from "@/components/card/SmallDate";
+
+import { getMonth } from "@/utils/getMonth";
+
+import type { FC } from "react";
+import type { Dayjs } from "dayjs";
 
 interface ISmallCalendarSelector {
   daySelectedEvent: Dayjs;
@@ -89,7 +87,7 @@ const SmallCalendarSelector: FC<ISmallCalendarSelector> = ({
         {currentMonth.map((row, index) => (
           <Fragment key={index}>
             {row.map((
-              day: Dayjs | DaySelected,
+              day: Dayjs,
               index: number
             ) => (
               <div key={index}>

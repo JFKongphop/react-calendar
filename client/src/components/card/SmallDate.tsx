@@ -1,11 +1,16 @@
-import { FC, useContext, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import dayjs, { Dayjs } from 'dayjs';
-import GlobalContext from '@/context/GlobalContext';
-import { DaySelected } from '../calendar/type/type';
+import { useDispatch } from 'react-redux';
+import dayjs from 'dayjs';
+
+import { useSelector } from '@/redux/store';
+import { daySelectedData } from '@/redux/selector/daySelected.selector';
+import { addDaySelected } from '@/redux/slice/daySelected.slice';
+
+import type { FC } from 'react';
+import type { Dayjs } from 'dayjs';
 
 interface ISmallDate {
-  day: Dayjs | DaySelected;
+  day: Dayjs;
   currentMonthIdx: number;
   type: 'navigate' | 'selector';
   daySelectedEvent?: Dayjs;
@@ -14,67 +19,48 @@ interface ISmallDate {
 
 const SmallDate: FC<ISmallDate> = ({
   day,
-  currentMonthIdx,
   type,
   daySelectedEvent,
   onDaySelected
 }) => {
-  const [selectedDay, setSelectedDay] = useState<Dayjs>();
-
-  const { 
-    daySelected,
-    setSmallCalendarMonth,
-    setDaySelected,
-  } = useContext(GlobalContext);
   const navigate = useNavigate();
   const { day_date } = useParams();
+  const dispatch = useDispatch();
+  const daySelected = useSelector(daySelectedData)
 
-  const dateEventHandler = (day: DaySelected) => {
-    setSmallCalendarMonth(currentMonthIdx);
-    setDaySelected(day);
-    const timestamp = day.valueOf() as number;
-    const date = new Date(timestamp);
-  
-    const options = {
-      year: 'numeric' as const,
-      month: 'short' as const,
-      day: 'numeric' as const,
-      timeZone: 'Asia/Bangkok',
-    };
-  
-    const formatter = new Intl.DateTimeFormat('en-Us', options);
-    const dateString = formatter.format(date).replace(',', '');
-    const datePage = dateString
-      ?.toLocaleLowerCase()
-      .split(' ')
-      .join('-');    
+  const dateEventHandler = (day: Dayjs) => {
+    dispatch(addDaySelected(day))
+    const datePage = dayjs(day).format('MMM-DD-YYYY').toLocaleLowerCase()
 
-    navigate(`/calendar/${datePage}`);
+    navigate(`/calendar/date/${datePage}`);
   }
 
-  const getDayClass = (day: Dayjs | DaySelected) => {
+  const getDayClass = (day: Dayjs) => {
     const format = 'DD-MM-YY';
-    const currDay = day.format(format);
-    const slcDay = daySelected && daySelected.format(format);
-    const today = dayjs().format('DD-MM-YY');
-    const dayParam = dayjs(day_date).format('DD-MM-YY').toLowerCase();
+    const currentDayInCalendar = day.format(format);
+    const selectDay = daySelected.format(format);
+    const today = dayjs().format(format);
+    const dayParamUrl = dayjs(day_date).format(format).toLowerCase();
   
     let scheduleDay: string = '';
     if (daySelectedEvent) {
-      scheduleDay = (daySelectedEvent as unknown as Dayjs).format(format);
+      scheduleDay = daySelectedEvent.format(format);
     }
 
     if (type === 'navigate') {
-      if (today === currDay) {
+      if (today === currentDayInCalendar) {
         return 'bg-calendar-main-theme rounded-full text-white font-bold';
       }
   
-      if (slcDay === currDay || dayParam === currDay) {
+      if (
+        selectDay === currentDayInCalendar 
+        || dayParamUrl === currentDayInCalendar
+      ) {
         return 'bg-calendar-minor-theme rounded-full text-calendar-main-theme font-bold';
       }
     }
     if (type === 'selector') {
-      if (scheduleDay === currDay) {
+      if (scheduleDay === currentDayInCalendar) {
         return 'bg-calendar-minor-theme rounded-full text-calendar-main-theme font-bold'
       }
     } 
@@ -86,7 +72,7 @@ const SmallDate: FC<ISmallDate> = ({
     case 'navigate':
       return (
         <button
-          onClick={() => dateEventHandler(day as DaySelected)}
+          onClick={() => dateEventHandler(day as Dayjs)}
           className={`py-1 w-full ${getDayClass(day as Dayjs)}`}
         >
           <span className="text-sm">{(day as Dayjs).format("D")}</span>

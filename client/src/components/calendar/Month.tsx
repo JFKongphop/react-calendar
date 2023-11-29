@@ -1,12 +1,14 @@
-import { 
-  FC,
-  Fragment
-} from "react";
+import { Fragment } from "react";
+
 import Day from "./Day";
-import { DaySelected } from "./type/type";
+
+import type { FC } from "react";
+import type { Dayjs } from "dayjs";
+import { CalendarEvent } from "./type/type";
+
 
 interface IMonth {
-  month: DaySelected[][];
+  month: Dayjs[][];
 }
 
 const Month: FC<IMonth> = ({ month }) => {

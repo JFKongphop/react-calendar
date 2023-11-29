@@ -1,9 +1,9 @@
-import { StateEvents } from '@/context/ContextWrapper';
-import { FC } from 'react';
-import SmallEventList from '../card/SmallEventList';
+import SmallEventList from '@/components/card/SmallEventList';
+import type { FC } from 'react';
+import type { CalendarEvent } from './type/type';
 
 interface ISmallEvent {
-  dayEvents: StateEvents[]
+  dayEvents: CalendarEvent[]
 }
 
 const SmallEvent: FC<ISmallEvent> = ({

@@ -13,7 +13,7 @@
     "env": "echo >> .env"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.1.4",
+    "@ant-design/icons": "^5.2.6",
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.17",
     "@hookform/resolvers": "^2.6.0",
@@ -28,6 +28,7 @@
     "react-icons": "^4.11.0",
     "react-redux": "^8.1.2",
     "react-router-dom": "6",
+    "redux": "^4.2.1",
     "viem": "^1.19.3",
     "wagmi": "^1.4.7"
   },

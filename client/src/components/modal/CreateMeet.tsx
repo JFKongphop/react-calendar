@@ -1,16 +1,8 @@
-import { 
-  Fragment, 
-  useEffect,
-  useContext, 
-  useState
-} from 'react';
-import { 
-  Dialog, 
-  Transition 
-} from '@headlessui/react';
-import GlobalContext from "@/context/GlobalContext";
+import { Fragment, useState, useEffect } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
 import { useParams } from 'react-router-dom';
 import { useForm } from "react-hook-form";
+import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 
 import { CgClose } from "react-icons/cg";
@@ -19,16 +11,15 @@ import SmallCalendarSelector from '@/components/calendar/SmallCalendarSelector';
 import SubmitEventButton from '@/components/button/SubmitEventButton';
 import { defaultValues } from "@/components/calendar/type/initialState";
 
+import EventRequest from '@/lib/event-request';
 import { convertDateToUnix } from '@/utils/convertDateToUnix';
 
 import type { FC } from 'react'
 import type { UseFormRegister } from "react-hook-form";
 import type { Dayjs } from 'dayjs';
-import type { IGlobalContext } from "@/context/GlobalContext";
-import type { 
-  IMeetEvent, 
-  TimeRatio 
-} from "../calendar/type/type";
+import type { IMeetEvent, TimeRatio } from "@/components/calendar/type/type";
+
+import { toggleCreateEventModal } from '@/redux/slice/showCreateEventModal.slice';
 
 
 interface ICreateMeet { showModal: boolean; }
@@ -40,13 +31,11 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
   const [openTimeRatioEnd, setOpenTimeRatioEnd] = useState<boolean>(false);
   const [daySelectorEvent, setDaySelectorEvent] = useState<Dayjs>(dayjs());
 
-  const { day_date } = useParams();  
+  const { day_date } = useParams();
   
-  const {
-    selectedEvent,
-    setShowEventModal,
-    dispatchCalEvent,
-  } = useContext<IGlobalContext>(GlobalContext);
+
+  const dispatch = useDispatch()
+
 
   const { 
     register,
@@ -65,18 +54,21 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
 
     const calendarEvent = {
       title,
-      id: selectedEvent ? selectedEvent.id : Date.now(),
-      startTimestamp: convertDateToUnix(
+      id: Date.now(),
+      start_event: convertDateToUnix(
         startHour, 
         timeRatioStart, 
         daySelectorEvent
       ),
-      endTimestamp: convertDateToUnix(
+      end_event: convertDateToUnix(
         endHour, 
         timeRatioEnd, 
         daySelectorEvent
       ),
     };
+
+    const response = await EventRequest.post('/calendar', calendarEvent)
+    console.log(response.data)
 
     console.log(calendarEvent)
     
@@ -86,7 +78,9 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
     //   dispatchCalEvent({ type: "push", payload: calendarEvent });
     // }
 
-    setShowEventModal(false);
+    // setShowEventModal(false);
+    dispatch(toggleCreateEventModal(false))
+
     reset(defaultValues);
     setTimeRatioStart('00');
     setTimeRatioEnd('00');
@@ -111,7 +105,8 @@ const CreateMeet: FC<ICreateMeet> = ({ showModal }) => {
   }
 
   const closeModalHandler = () => {
-    setShowEventModal(false)
+    // setShowEventModal(false)
+    dispatch(toggleCreateEventModal(false))
   }
 
   const getDaySelectedHandler = (day: Dayjs) => {

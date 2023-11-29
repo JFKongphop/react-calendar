@@ -1,12 +1,13 @@
 import { RouterProvider } from 'react-router-dom';
-import ContextWrapper from './context/ContextWrapper';
 import router from './router';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
 const App = () => {
   return (
-    <ContextWrapper>
+    <Provider store={store}>
       <RouterProvider router={router} />
-    </ContextWrapper>
+    </Provider>
   )
 }
 

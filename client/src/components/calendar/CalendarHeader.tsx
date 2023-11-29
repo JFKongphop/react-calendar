@@ -1,21 +1,25 @@
-import { useContext } from "react";
+import { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
-import GlobalContext from "@/context/GlobalContext";
+
+import { monthIndexData } from "@/redux/selector/monthIndex.selector";
+import { addMonthIndexState } from "@/redux/slice/monthIndex.slice";
+
 import MonthSlideHandler from "../button/MonthSlideHandler";
 import CalendarRangeDropdown from "../dropdown/CalendarRangeDropdown";
 
 const CalendarHeader = () => {
-  const { 
-    monthIndex, 
-    setMonthIndex 
-  } = useContext(GlobalContext);
+  const dispatch = useDispatch();
+  const monthIndex = useSelector(monthIndexData);
 
-  const handlePrevMonth = () => {
-    setMonthIndex(monthIndex - 1);
-  }
-  const handleNextMonth = () => {
-    setMonthIndex(monthIndex + 1);
-  }
+  const handlePrevMonth = useCallback(() => {
+    dispatch(addMonthIndexState(monthIndex - 1));
+  }, [monthIndex])
+  
+  const handleNextMonth = useCallback(() => {
+    dispatch(addMonthIndexState(monthIndex + 1));
+  }, [monthIndex])
+
 
   return (
     <header 
@@ -26,7 +30,7 @@ const CalendarHeader = () => {
       </h2>
       <CalendarRangeDropdown />
       <div className="flex flex-row gap-4 mx-4">
-        <MonthSlideHandler 
+        <MonthSlideHandler
           type={'left'}
           onSlideMonth={handlePrevMonth}
         />

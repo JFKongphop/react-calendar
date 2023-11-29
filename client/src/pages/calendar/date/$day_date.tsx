@@ -1,45 +1,49 @@
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { AxiosResponse } from 'axios';
+
+import { useSelector } from '@/redux/store';
+import { rangeTimeData } from '@/redux/selector/rangeTime.selector';
+import { addRangeTime } from '@/redux/slice/rangeTime.slice';
+import { addAllEventState } from '@/redux/slice/event.slice';
+import { allEventData } from '@/redux/selector/event.selector';
+import { showCreateEventModalData } from '@/redux/selector/showCreateEventModal.selector';
+
+import EventRequest from '@/lib/event-request';
+import { dayjsToTimestamp } from '@/utils/rangeTimeStamp';
+
 import CalendarHeader from '@/components/calendar/CalendarHeader';
 import EventList from '@/components/card/EventList';
 import LineList from '@/components/card/LineList';
 import TimeLabelList from '@/components/card/TimeLabelList';
 import CreateMeet from '@/components/modal/CreateMeet';
 import Sidebar from '@/components/calendar/Sidebar';
-import GlobalContext from '@/context/GlobalContext';
 import CalendarEventCard from '@/components/card/CalendarEventCard';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import dayjs from 'dayjs';
+
+import type { CalendarEvent } from '@/components/calendar/type/type';
 
 const day_timestamp = () => {
   const [scheduleInnerHeight, setScheduleInnerHeight] = useState<number>(0);
   const { day_date } = useParams();
+  const dispatch = useDispatch();
+  const events = useSelector(allEventData);
+  const rangeTime = useSelector(rangeTimeData);
+  const showCreateEventModal = useSelector(showCreateEventModalData)
 
-  const { 
-    showEventModal ,
-    filteredEvents,
-  } = useContext(GlobalContext);
+  useEffect(() => {
+    dispatch(addRangeTime(dayjsToTimestamp(day_date as string, 'day')))
+  }, [day_date]);
 
-  const capitalizeFirstLetter = (string: string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
-  const date = dayjs(
-    capitalizeFirstLetter(day_date!), 
-    { format: 'MMM-DD-YYYY' }
-  );
-  const startOfDayTimestamp = date.startOf('day').valueOf();
-  const endOfDayTimestamp = date.endOf('day').valueOf();
-  
-  const events = filteredEvents.filter(
-    (data) => 
-      data.startTimestamp >= startOfDayTimestamp 
-      && data.endTimestamp <= endOfDayTimestamp
-  );
-
-  console.log('day', startOfDayTimestamp, endOfDayTimestamp)
+  useEffect(() => {
+    (async() => {
+      const { data }: AxiosResponse<{ events: CalendarEvent[] }> = await EventRequest.get(`/calendar?start-event=${rangeTime[0]}&end-event=${rangeTime[1]}`)
+      dispatch(addAllEventState(data.events))
+    })()
+  }, [rangeTime]);
 
   const scheduleInnerRef = useRef<any>();
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (scheduleInnerRef.current) {
       const divHeight = scheduleInnerRef.current.clientHeight;
       setScheduleInnerHeight(divHeight * .925);
@@ -52,7 +56,7 @@ const day_timestamp = () => {
       ref={scheduleInnerRef}
     >
       <CreateMeet 
-        showModal={showEventModal}
+        showModal={showCreateEventModal}
       />
       <CalendarHeader />
       <div 
@@ -68,8 +72,8 @@ const day_timestamp = () => {
               <EventList 
                 key={data.id}
                 title={data.title}
-                startTimestamp={data.startTimestamp}
-                endTimestamp={data.endTimestamp}
+                startTimestamp={data.start_event}
+                endTimestamp={data.end_event}
               />
             ))
           }
